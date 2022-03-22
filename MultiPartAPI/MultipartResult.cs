@@ -57,6 +57,13 @@ namespace MultiPartAPI
                 context.HttpContext.Response.ContentType = content.Headers.ContentType.ToString();
             }
             await content.CopyToAsync(context.HttpContext.Response.Body);
+            foreach (var item in this)
+            {
+                if (item.Stream != null)
+                {
+                    item.Stream.Dispose();
+                }
+            }
         }
     }
 }
