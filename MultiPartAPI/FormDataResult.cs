@@ -4,20 +4,11 @@ using System.Net.Http.Headers;
 
 namespace MultiPartAPI
 {
-    public class MultipartContent
-    {
-        public string? ContentType { get; set; }
-
-        public string? FileName { get; set; }
-
-        public Stream? Stream { get; set; }
-    }
-
-    public class MultipartResult : Collection<MultipartContent>, IActionResult
+    public class FormDataResult : Collection<MultipartContent>, IActionResult
     {
         private readonly System.Net.Http.MultipartContent content;
 
-        public MultipartResult(string subtype = "form-data", string boundary = null)
+        public FormDataResult(string subtype = "form-data", string boundary = null)
         {
             if (boundary == null)
             {
@@ -31,10 +22,8 @@ namespace MultiPartAPI
 
         public async Task ExecuteResultAsync(ActionContext context)
         {
-            var i = 0;
             foreach (var item in this)
             {
-                i++;
                 if (item.Stream != null)
                 {
                     var content = new StreamContent(item.Stream);
@@ -44,11 +33,11 @@ namespace MultiPartAPI
                     }
                     if (item.FileName != null)
                     {
-                        var contentDisposition = new ContentDispositionHeaderValue("form-data");
-                        contentDisposition.Name = $"key_{i}";
+                        var contentDisposition = new ContentDispositionHeaderValue("attachment");
                         contentDisposition.FileName = item.FileName;
-                        contentDisposition.FileNameStar = contentDisposition.FileNameStar;
-                        content.Headers.ContentDisposition = contentDisposition;
+                        content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment");
+                        content.Headers.ContentDisposition.FileName = contentDisposition.FileName;
+                        content.Headers.ContentDisposition.FileNameStar = contentDisposition.FileNameStar;
                     }
                     this.content.Add(content);
                 }

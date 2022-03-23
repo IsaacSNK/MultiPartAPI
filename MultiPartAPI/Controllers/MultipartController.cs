@@ -27,7 +27,7 @@ namespace MultiPartAPI.Controllers
                 },
                 new MultipartContent()
                 {
-                    ContentType = "application/json",
+                    ContentType = "text/plain",
                     FileName = "File.json",
                     Stream = this.OpenFile("File.json")
                 }
